@@ -1,6 +1,26 @@
 name = "STRIde"
-[compat]
-julia = "1.12.5"
-DrWatson = "2.19.1"
+desc = "Shallow-to-Deep Transition Recognition and Identification"
+authors = ["Nathanael Wong <natgeo.wong@outlook.com>"]
+
 [deps]
+ARMLive = "3cf54da3-541f-4d42-bdd0-41bf6096b485"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+ERA5Reanalysis = "99c076f5-c00e-46eb-a0bd-7ba31777c146"
+ETOPO = "eb8fb1ab-fde0-4497-ad36-194d38f2cde7"
+GeoJSON = "61d90e0f-e114-555e-ac52-39dfb47a3ef9"
+GeoRegions = "b001f823-fa75-4bff-bf55-6610c8f3688a"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LandSea = "cbf7bb22-a1a6-46cb-8b24-174e3bc5fc04"
+NASAMergedTb = "0a1892c8-8a22-4bcd-b9e2-a5b491b58d94"
+NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+RegionGrids = "ecebd26c-3930-4a82-94f6-9df2a191b288"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
+[compat]
+julia = "1"
