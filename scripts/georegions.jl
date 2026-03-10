@@ -14,6 +14,6 @@ geo_s = GeoRegion(
 ); overwrite(geo_s,path=srcdir())
 
 geo_b = GeoRegion(
-    [-1,1,1,-1,-1]*10 .+lon,[-1,-1,1,1,-1]*10 .+lat,
+    [-1,1,1,-1,-1]*5 .+lon,[-1,-1,1,1,-1]*5 .+lat,
     ID = "$(stnID)_LARGE", pID = "GLB", name = "Southern Great Plains (Regional)"
 ); overwrite(geo_b,path=srcdir())
