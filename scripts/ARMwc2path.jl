@@ -30,13 +30,11 @@ for idt in 1 : ndt
         attribs[2] = Dict(ids["$(vname)_content"].attrib)
 
         NCDatasets.load!(ids["height"].var,iz,:)
-        tdata = nomissing(ids["$(vname)_content"][:,:],0)
-        inum  = .!isnan.(nomissing(ids["$(vname)_content"][:,:],NaN))
+        tdata =   nomissing( ids["$(vname)_content"][:,:],0)
+        inum  = .!ismissing.(ids["$(vname)_content"][:,:])
 
         for it = 1 : nt
-
-            wpath[it, idt] = trapz(tz, vcat(0,view(tdata, :, it)))
-
+            wpath[it,idt] = sum(inum[:,it]) > 0 ? trapz(tz,vcat(0,view(tdata,:,it))) : NaN
         end
 
         close(ids)
