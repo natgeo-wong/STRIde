@@ -6,18 +6,18 @@ using ARMLive
 
 vname = "ice_water_path"
 
-ds1 = NCDataset(datadir("ARM","sgpmicrobasepi2C1.c1","sgpmicrobasepi2C1.c1-$(vname)-1996-01-01-2010-12-31.nc"))
+ds1 = NCDataset(datadir("ARM","sgpmicrobasepi2C1.c1","sgpmicrobasepi2C1.c1-$(vname)-19960101-20101231.nc"))
 t1  = ds1["time"][1:180:end]
 wp1 = nomissing(ds1[vname][1:180:end],NaN)
 close(ds1)
 
-ds2 = NCDataset(datadir("ARM","sgpmicrobasekaplusC1.c1","sgpmicrobasekaplusC1.c1-$(vname)-2011-01-01-2021-12-31.nc"))
+ds2 = NCDataset(datadir("ARM","sgpmicrobasekaplusC1.c1","sgpmicrobasekaplusC1.c1-$(vname)-20110101-20211231.nc"))
 t2  = ds2["time"][1:450:end]
 wp2 = nomissing(ds2[vname][1:450:end],NaN)
 close(ds2)
 
 dtvec = DateTime(1996,1,1) : Minute(30) : DateTime(2021,12,31,23,30); ndt = length(dtvec)
-wpath = zeros(ndt)
+wpath = zeros(ndt)*NaN
 
 for idt in 1 : ndt
 
@@ -32,7 +32,7 @@ for idt in 1 : ndt
 
 end
 
-fnc = datadir("ARM-$(vname)-compiledhourly.nc")
+fnc = datadir("sgpmicrobase-$(vname)-compiledhourly.nc")
 isfile(fnc) ? rm(fnc,force=true) : nothing
 ds = NCDataset(fnc,"c")
 

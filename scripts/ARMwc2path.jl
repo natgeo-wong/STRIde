@@ -5,6 +5,8 @@ using Dates, Statistics
 using ARMLive
 using Trapz
 
+include(srcdir("common.jl"))
+
 ads = ARMDataset(
     stream = "sgpmicrobasekaplusC1.c1",
     start = Date(2011), stop = Date(2021,12,31), path = datadir()
@@ -39,11 +41,15 @@ for idt in 1 : ndt
 
         close(ids)
 
+    else
+
+        wpath[:,idt] .= NaN
+
     end
 
 end
 
-fnc = joinpath(ads.path,"$(ads.stream)-$(vname)_path-$(ads.start)-$(ads.stop).nc")
+fnc = joinpath(ads.path,"$(ads.stream)-$(vname)_path-$(ymd2str(ads.start))-$(ymd2str(ads.stop)).nc")
 isfile(fnc) ? rm(fnc,force=true) : nothing
 ds = NCDataset(fnc,"c",attrib=attribs[1])
 
