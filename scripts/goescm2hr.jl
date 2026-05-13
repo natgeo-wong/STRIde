@@ -1,13 +1,13 @@
 using DrWatson
 @quickactivate "STRIde"
 
-using DelimitedFiles
+using DelimitedFiles, Logging, Statistics
 using GOES
 using NASAMergedTb
 using RegionGrids
 
 g16 = GOESDataset(ID=16,product="ABI-L2-ACMC",path=datadir())
-g19 = GOESDataset(ID=16,product="ABI-L2-ACMC",path=datadir())
+g19 = GOESDataset(ID=19,product="ABI-L2-ACMC",path=datadir())
 geo = GeoRegion("SGP_LARGE",path=srcdir())
 gvar = "BCM"
 
@@ -18,22 +18,18 @@ slat = sdata[findfirst(sID .== sname),3]
 
 glon,glat = grid(g16);                ggrd = RegionGrid(geo,Point2.(glon,glat))
 blon,blat = NASAMergedTb.btdlonlat(); bgrd = RegionGrid(geo,blon,blat)
-imat = nearest(ggrd,bgrd)
-ipnt = nearest(Point2(slon,slat),bgrd)
-ind  = findall(imat[:].==ipnt); nind = length(ind)
-iii = ind .== ipnt
 
 dtvec = Date(2017,4,19) : Day(1) : Date(2026,2,28); ndt = length(dtvec)
-time = zeros(DateTime,288,ndt) .+ DateTime(2000,1,1,0,0,0)
+time = fill(DateTime(2000,1,1,0,0,0),288,ndt)
 data = zeros(nind,288,ndt)
 
 for (ii, dt) in enumerate(dtvec)
 
     ds = dt < Date(2024,10,15) ? read(g16,geo,gvar,dt,throw=false) : read(g19,geo,gvar,dt,throw=false)
     if !isnothing(ds)
-        time[:,ii] = ds["time"][:]
-        tdata = reshape(ds[gvar][:,:,:],:,288)
-        data[:,:,ii] = tdata[ind,:]
+        time[:,ii] .= ds["time"][:]
+        tdata = reshape(nomissing(ds[gvar][:,:,:],NaN),:,288)
+        data[:,:,ii] .= tdata[ind,:]
         close(ds)
     end
 
@@ -58,20 +54,21 @@ for (ii, dt) in enumerate(dtvec)
         idt = DateTime(iyr,imo,idy,0,0,0) + (it-1) * Minute(30)
         i1 = findlast(idt.>=time)
         i2 = findfirst(idt.<=time)
-        idata1 = (!isnothing(i1)&&((idt-time[i1]) < Minute(15))) ? data[:,i1] : NaN
-        idata2 = (!isnothing(i2)&&((time[i2]-idt) < Minute(15))) ? data[:,i2] : NaN
-
-        if idata1[iii] == idata2[iii]
-            ndata[1,it,ii] = idata1[iii]
+        idata1 = (!isnothing(i1)&&((idt-time[i1])<Minute(15))) ? data[:,i1] : fill(NaN,3)
+        idata2 = (!isnothing(i2)&&((time[i2]-idt)<Minute(15))) ? data[:,i2] : fill(NaN,3)
+        iidata1 = idata1[iii][1]
+        iidata2 = idata2[iii][1]
+        if iidata1 == iidata2
+            ndata[1,it,ii] = iidata1
             ndata[2,it,ii] = mean(idata1.+idata2)/2
-        elseif isnan(idata1)
-            ndata[1,it,ii] = idata2[iii]
+        elseif isnan(iidata1)
+            ndata[1,it,ii] = iidata2
             ndata[2,it,ii] = mean(idata2)
-        elseif isnan(idata2)
-            ndata[1,it,ii] = idata1[iii]
-            ndata[2,it,ii] = mean(idata1)/2
+        elseif isnan(iidata2)
+            ndata[1,it,ii] = iidata1
+            ndata[2,it,ii] = mean(idata1)
         else
-            ndata[1,it,ii] = mean(idata1.+idata2)/2
+            ndata[1,it,ii] = round(mean(idata1.+idata2)/2)
             ndata[2,it,ii] = mean(idata1.+idata2)/2
         end
 
@@ -83,7 +80,7 @@ fnc = datadir("GOES-ACMC-20170419-20260228-hourly.nc")
 isfile(fnc) ? rm(fnc,force=true) : nothing
 ds = NCDataset(fnc,"c")
 
-defDim(ds,"time",ndt)
+defDim(ds,"time",ndt*48)
 
 nct  = defVar(ds,"time",Int32,("time",),attrib=Dict(
     "units"     => "minutes since 2000-01-01 00:00:00.0",
