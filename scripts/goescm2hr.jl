@@ -18,6 +18,9 @@ slat = sdata[findfirst(sID .== sname),3]
 
 glon,glat = grid(g16);                ggrd = RegionGrid(geo,Point2.(glon,glat))
 blon,blat = NASAMergedTb.btdlonlat(); bgrd = RegionGrid(geo,blon,blat)
+imat = nearest(ggrd,bgrd)
+ind  = findall(imat[:].==nearest(Point2(slon,slat),bgrd)); nind = length(ind)
+iii = ind .== nearest(Point2(slon,slat),ggrd)
 
 dtvec = Date(2017,4,19) : Day(1) : Date(2026,2,28); ndt = length(dtvec)
 time = fill(DateTime(2000,1,1,0,0,0),288,ndt)
