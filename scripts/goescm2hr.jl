@@ -2,12 +2,12 @@ using DrWatson
 @quickactivate "STRIde"
 
 using DelimitedFiles, Logging, Statistics
-using GOES
+using GOESatellites
 using NASAMergedTb
 using RegionGrids
 
-g16 = GOESDataset(ID=16,product="ABI-L2-ACMC",path=datadir())
-g19 = GOESDataset(ID=19,product="ABI-L2-ACMC",path=datadir())
+g16 = GOESDataset("ABI-L2-ACM",sector="C",satellite=16,path=datadir())
+g19 = GOESDataset("ABI-L2-ACM",sector="C",satellite=19,path=datadir())
 geo = GeoRegion("SGP_LARGE",path=srcdir())
 gvar = "BCM"
 
